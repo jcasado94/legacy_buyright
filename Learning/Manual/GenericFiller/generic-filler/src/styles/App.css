@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+}
+
+.Prod-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.prod-properties {
+  margin-top: 30px;
+  margin-bottom: 60px;
+}
+
+.App-main {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.react-tags {
+  margin-bottom: 50px;
+}
