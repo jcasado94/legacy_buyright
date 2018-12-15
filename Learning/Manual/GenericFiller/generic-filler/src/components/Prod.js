@@ -5,6 +5,7 @@ import ProdImage from './ProdImage'
 import TagInput from './TagInput';
 
 import messages from './messages'
+import ProdUsages from './ProdUsages';
 
 class Prod extends Component {
 
@@ -20,14 +21,17 @@ class Prod extends Component {
         {id: 'four', text: 'Four'},
         {id: 'five', text: 'Five'},
       ],
-      prodUsages: [],
-      prodUsagesSuggestions: [
-        {id: 'one', text: 'One'},
-        {id: 'two', text: 'Two'},
-        {id: 'three', text: 'Three'},
-        {id: 'four', text: 'Four'},
-        {id: 'five', text: 'Five'},
-      ]
+      prodUsages: [
+        'one',
+        'two'
+      ],
+      allUsages: {
+        'one': 'One',
+        'two': 'Two',
+        'three': 'Three',
+        'four': 'Four',
+        'five': 'Five'
+      }
     }
 
     this.handleTagAddition = this.handleTagAddition.bind(this)
@@ -51,13 +55,9 @@ class Prod extends Component {
             tagList={this.state.prodTags}
             tagSuggestions={this.state.prodTagsSuggestions}
           />
-          <TagInput
-            onTagAddition={this.handleUsageAddition}
-            onTagDelete={this.handleUsageDelete}
-            title={messages.USAGES_TITLE}
-            placeholder={messages.USAGES_PLACEHOLDER}
-            tagList={this.state.prodUsages}
-            tagSuggestions={this.state.prodUsagesSuggestions}
+          <ProdUsages
+            allUsages={this.state.allUsages}
+            prodUsages={this.state.prodUsages}
           />
         </div>
       </div>
@@ -90,11 +90,11 @@ class Prod extends Component {
 
 }
 
-function listAddition(tag, list) {
+const listAddition = (tag, list) => {
   return [...list, tag]
 }
 
-function listDelete(i, list) {
+const listDelete = (i, list) => {
   return list.filter((tag, index) => index !== i)
 }
 
