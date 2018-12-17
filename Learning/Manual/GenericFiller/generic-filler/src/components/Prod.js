@@ -4,8 +4,8 @@ import ProdTitle from './ProdTitle'
 import ProdImage from './ProdImage'
 import TagInput from './TagInput';
 
-import messages from './messages'
-import ProdUsages from './ProdUsages';
+import { TAGS_TITLE, TAGS_PLACEHOLDER} from '../global/global'
+import ProdUsagesContainer from '../containers/ProdUsagesContainer';
 
 class Prod extends Component {
 
@@ -20,24 +20,11 @@ class Prod extends Component {
         {id: 'three', text: 'Three'},
         {id: 'four', text: 'Four'},
         {id: 'five', text: 'Five'},
-      ],
-      prodUsages: [
-        'one',
-        'two'
-      ],
-      allUsages: {
-        'one': 'One',
-        'two': 'Two',
-        'three': 'Three',
-        'four': 'Four',
-        'five': 'Five'
-      }
+      ]
     }
 
     this.handleTagAddition = this.handleTagAddition.bind(this)
     this.handleTagDelete = this.handleTagDelete.bind(this);
-    this.handleUsageAddition = this.handleUsageAddition.bind(this);
-    this.handleUsageDelete = this.handleUsageDelete.bind(this);
 
   }
 
@@ -50,15 +37,12 @@ class Prod extends Component {
           <TagInput
             onTagAddition={this.handleTagAddition}
             onTagDelete={this.handleTagDelete}
-            title={messages.TAGS_TITLE}
-            placeholder={messages.TAGS_PLACEHOLDER}
+            title={TAGS_TITLE}
+            placeholder={TAGS_PLACEHOLDER}
             tagList={this.state.prodTags}
             tagSuggestions={this.state.prodTagsSuggestions}
           />
-          <ProdUsages
-            allUsages={this.state.allUsages}
-            prodUsages={this.state.prodUsages}
-          />
+          <ProdUsagesContainer />
         </div>
       </div>
 		);
@@ -73,18 +57,6 @@ class Prod extends Component {
   handleTagDelete(i) {
     this.setState({
       prodTags: listDelete(i, this.state.prodTags)
-    })
-  }
-
-  handleUsageAddition(tag) {
-    this.setState({
-      prodUsages: listAddition(tag, this.state.prodUsages)
-    })
-  }
-
-  handleUsageDelete(i) {
-    this.setState({
-      prodUsages: listDelete(i, this.state.prodUsages)
     })
   }
 
