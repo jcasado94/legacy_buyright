@@ -1,7 +1,8 @@
 package mongo
 
 import (
-	"../../pkg"
+	"gobuyright/pkg/entity"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -21,14 +22,14 @@ func gfUserModelIndex() mgo.Index {
 	}
 }
 
-func newGfUserModel(u *root.GfUser) *gfUserModel {
+func newGfUserModel(u *entity.GfUser) *gfUserModel {
 	return &gfUserModel{
 		Username: u.Username,
 	}
 }
 
-func (u *gfUserModel) toGfUser() *root.GfUser {
-	return &root.GfUser{
+func (u *gfUserModel) toGfUser() *entity.GfUser {
+	return &entity.GfUser{
 		ID:       u.ID.Hex(),
 		Username: u.Username,
 	}

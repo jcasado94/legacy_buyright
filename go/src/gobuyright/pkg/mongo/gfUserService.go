@@ -1,7 +1,10 @@
 package mongo
 
 import (
-	"../../pkg/"
+	"gobuyright/pkg/entity"
+
+	"gopkg.in/mgo.v2/bson"
+
 	"gopkg.in/mgo.v2"
 )
 
@@ -15,13 +18,13 @@ func NewGfUserService(session *Session, dbName string, colName string) *GfUserSe
 	return &GfUserService{collection}
 }
 
-func (s *GfUserService) CreateUser(u *root.GfUser) error {
+func (s *GfUserService) CreateUser(u *entity.GfUser) error {
 	user := newGfUserModel(u)
 	return s.collection.Insert(&user)
 }
 
-func (s *GfUserService) GetByID(id string) (*root.GfUser, error) {
+func (s *GfUserService) GetByUsername(username string) (*entity.GfUser, error) {
 	model := gfUserModel{}
-	err := s.collection.FindId(id).One(&model)
+	err := s.collection.Find(bson.M{"username": username}).One(&model)
 	return model.toGfUser(), err
 }

@@ -1,11 +1,10 @@
 package mongo_test
 
 import (
+	"gobuyright/pkg/entity"
+	"gobuyright/pkg/mongo"
 	"log"
 	"testing"
-
-	"../../pkg"
-	"../mongo"
 )
 
 const (
@@ -27,7 +26,7 @@ func createGfUser_should_insert_user_into_mongo(t *testing.T) {
 	userService := mongo.NewGfUserService(session.Copy(), dbName, userCollectionName)
 
 	testId, testUsername := "1111", "super_username"
-	user := root.GfUser{
+	user := entity.GfUser{
 		ID:       testId,
 		Username: testUsername,
 	}
@@ -37,7 +36,7 @@ func createGfUser_should_insert_user_into_mongo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unable to create user: %s", err)
 	}
-	results := make([]root.GfUser, 0)
+	results := make([]entity.GfUser, 0)
 	session.GetCollection(dbName, userCollectionName).Find(nil).All(&results)
 
 	count := len(results)
