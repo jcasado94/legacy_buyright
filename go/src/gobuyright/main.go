@@ -2,6 +2,7 @@ package main
 
 import (
 	"gobuyright/pkg/mongo"
+	"gobuyright/pkg/mongo/service"
 	"gobuyright/pkg/server"
 	"log"
 )
@@ -13,7 +14,7 @@ func main() {
 	}
 	defer ms.Close()
 
-	u := mongo.NewGfUserService(ms.Copy(), "buyright", "user")
+	u := service.NewUserService(ms.Copy(), "buyright", "user")
 	s := server.NewServer(u)
 
 	s.Start()

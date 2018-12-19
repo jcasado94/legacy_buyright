@@ -14,9 +14,9 @@ type Server struct {
 	router *mux.Router
 }
 
-func NewServer(u entity.GfUserService) *Server {
+func NewServer(u entity.UserService) *Server {
 	s := Server{router: mux.NewRouter()}
-	NewGfUserRouter(u, s.newSubrouter("/user"))
+	NewUserRouter(u, s.newSubrouter("/user"))
 	return &s
 }
 

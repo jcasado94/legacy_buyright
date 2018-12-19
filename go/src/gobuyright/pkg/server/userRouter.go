@@ -9,12 +9,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type gfUserRouter struct {
-	userService entity.GfUserService
+type userRouter struct {
+	userService entity.UserService
 }
 
-func NewGfUserRouter(u entity.GfUserService, router *mux.Router) *mux.Router {
-	userRouter := gfUserRouter{u}
+func NewUserRouter(u entity.UserService, router *mux.Router) *mux.Router {
+	userRouter := userRouter{u}
 
 	router.HandleFunc("/", userRouter.createUserHandler).Methods("PUT")
 	router.HandleFunc("/{username}", userRouter.getUserHandler).Methods("GET")
@@ -22,7 +22,7 @@ func NewGfUserRouter(u entity.GfUserService, router *mux.Router) *mux.Router {
 	return router
 }
 
-func (ur *gfUserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) {
+func (ur *userRouter) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := decodeUser(r)
 	if err != nil {
 		WriteError(w, http.StatusBadRequest, "Invalid request payload")
@@ -38,7 +38,7 @@ func (ur *gfUserRouter) createUserHandler(w http.ResponseWriter, r *http.Request
 	WriteJson(w, http.StatusOK, err)
 }
 
-func (ur *gfUserRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
+func (ur *userRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
@@ -51,8 +51,8 @@ func (ur *gfUserRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, http.StatusOK, user)
 }
 
-func decodeUser(r *http.Request) (entity.GfUser, error) {
-	var u entity.GfUser
+func decodeUser(r *http.Request) (entity.User, error) {
+	var u entity.User
 	if r.Body == nil {
 		return u, errors.New("No request body")
 	}
