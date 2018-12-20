@@ -10,4 +10,5 @@ type Usage struct {
 type UsageService interface {
 	CreateUsage(us *Usage) error
 	GetByUsageID(usageID string) (*Usage, error)
+	GetAllUsages() []*Usage
 }

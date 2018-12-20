@@ -11,16 +11,12 @@ import (
 const (
 	mongoUrl       = "localhost:27017"
 	dbName         = "testDb"
-	collectionName = "user"
+	collectionName = "testCol"
 )
 
 func TestServices(t *testing.T) {
 	t.Run("UserService", userService)
 	t.Run("UsageService", usageService)
-}
-
-func usageService(t *testing.T) {
-	t.Run("CreateUsage", createUsage_should_insert_usage_into_mongo)
 }
 
 func userService(t *testing.T) {
@@ -59,6 +55,11 @@ func createUser_should_insert_user_into_mongo(t *testing.T) {
 	}
 }
 
+func usageService(t *testing.T) {
+	t.Run("CreateUsage", createUsage_should_insert_usage_into_mongo)
+	t.Run("GetAllUsages", getAllUsages_should_return_all_usages_in_mongo)
+}
+
 func createUsage_should_insert_usage_into_mongo(t *testing.T) {
 	session := connect()
 	defer finishTest(session)
@@ -89,6 +90,50 @@ func createUsage_should_insert_usage_into_mongo(t *testing.T) {
 	}
 	if results[0].UsageName != usage.UsageName {
 		t.Errorf("Wrong UsageName. Expected %s, got %s", testUsageName, results[0].UsageName)
+	}
+
+}
+
+func getAllUsages_should_return_all_usages_in_mongo(t *testing.T) {
+	session := connect()
+	defer finishTest(session)
+	usageService := service.NewUsageService(session.Copy(), dbName, collectionName)
+
+	usages, err := usageService.GetAllUsages()
+	if err != nil {
+		t.Error("Coulddd not retrieve usages.")
+	}
+	if len(usages) != 0 {
+		t.Errorf("Retrieved wrong number of usages. Expected %d, but got %d", 0, len(usages))
+	}
+
+	testId1, testUsageID1, testUsageName1 := "1", "this_usageID1", "this_usageName1"
+	testId2, testUsageID2, testUsageName2 := "2", "this_usageID2", "this_usageName2"
+	usage1 := &entity.Usage{
+		ID:        testId1,
+		UsageID:   testUsageID1,
+		UsageName: testUsageName1,
+	}
+	usage2 := &entity.Usage{
+		ID:        testId2,
+		UsageID:   testUsageID2,
+		UsageName: testUsageName2,
+	}
+	usageService.CreateUsage(usage1)
+	usageService.CreateUsage(usage2)
+
+	usages, err = usageService.GetAllUsages()
+	if err != nil {
+		t.Error("Could not retreive usages.")
+	}
+	if len(usages) != 2 {
+		t.Errorf("Retrieved wrong number of usages. Expected %d, but got %d", 0, len(usages))
+	}
+	if usages[0].UsageID != testUsageID1 {
+		t.Errorf("Wrong usage retrieved. Expected id %s, but got id %s", testUsageID1, usages[0].UsageID)
+	}
+	if usages[1].UsageID != testUsageID2 {
+		t.Errorf("Wrong usage retrieved. Expected id %s, but got id %s", testUsageID2, usages[1].UsageID)
 	}
 
 }
