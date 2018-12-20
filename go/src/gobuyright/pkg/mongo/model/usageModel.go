@@ -30,7 +30,7 @@ func NewUsageModel(u *entity.Usage) *UsageModel {
 	}
 }
 
-func ToUsage(um *UsageModel) *entity.Usage {
+func (um *UsageModel) ToUsage() *entity.Usage {
 	return &entity.Usage{
 		ID:        um.ID.Hex(),
 		UsageID:   um.UsageID,

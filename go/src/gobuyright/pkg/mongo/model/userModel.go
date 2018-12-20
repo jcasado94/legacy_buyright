@@ -31,7 +31,7 @@ func NewUserModel(u *entity.User) *UserModel {
 	}
 }
 
-func ToUser(um *UserModel) *entity.User {
+func (um *UserModel) ToUser() *entity.User {
 	return &entity.User{
 		ID:       um.ID.Hex(),
 		Username: um.Username,

@@ -26,7 +26,7 @@ func (us *UserService) CreateUser(u *entity.User) error {
 }
 
 func (us *UserService) GetByUsername(username string) (*entity.User, error) {
-	m := model.UserModel{}
-	err := us.collection.Find(bson.M{"username": username}).One(&m)
-	return model.ToUser(&m), err
+	um := model.UserModel{}
+	err := us.collection.Find(bson.M{"username": username}).One(&um)
+	return um.ToUser(), err
 }

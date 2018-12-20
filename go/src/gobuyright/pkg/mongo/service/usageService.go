@@ -25,7 +25,7 @@ func (us *UsageService) CreateUsage(u *entity.Usage) error {
 }
 
 func (us *UsageService) GetByUsageID(usageID string) (*entity.Usage, error) {
-	m := model.UsageModel{}
-	err := us.collection.Find(bson.M{"usageID": usageID}).One(&m)
-	return model.ToUsage(&m), err
+	um := model.UsageModel{}
+	err := us.collection.Find(bson.M{"usageID": usageID}).One(&um)
+	return um.ToUsage(), err
 }
