@@ -7,12 +7,14 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// UsageModel is the DB model for entity.Usage.
 type UsageModel struct {
 	ID        bson.ObjectId `bson:"_id,omitempty"`
 	UsageID   string
 	UsageName string
 }
 
+// UsageModelIndex constructs the mgo.Index for usageModel
 func UsageModelIndex() mgo.Index {
 	return mgo.Index{
 		Key:        []string{"usageID"},
@@ -23,6 +25,7 @@ func UsageModelIndex() mgo.Index {
 	}
 }
 
+// NewUsageModel creates a new UsageModel given a Usage.
 func NewUsageModel(u *entity.Usage) *UsageModel {
 	return &UsageModel{
 		UsageID:   u.UsageID,
@@ -30,6 +33,7 @@ func NewUsageModel(u *entity.Usage) *UsageModel {
 	}
 }
 
+// ToUsage creates an Usage from the UsageModel.
 func (um *UsageModel) ToUsage() *entity.Usage {
 	return &entity.Usage{
 		ID:        um.ID.Hex(),

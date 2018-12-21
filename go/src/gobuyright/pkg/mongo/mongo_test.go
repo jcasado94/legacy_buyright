@@ -5,6 +5,7 @@ import (
 	"gobuyright/pkg/mongo"
 	"gobuyright/pkg/mongo/service"
 	"log"
+	"reflect"
 	"testing"
 )
 
@@ -17,6 +18,8 @@ const (
 func TestServices(t *testing.T) {
 	t.Run("IUserService", iUserService)
 	t.Run("UsageService", usageService)
+	t.Run("TagService", tagService)
+	t.Run("UsageSelectionService", usageSelectionService)
 }
 
 func iUserService(t *testing.T) {
@@ -134,6 +137,132 @@ func getAllUsages_should_return_all_usages_in_mongo(t *testing.T) {
 	}
 	if usages[1].UsageID != testUsageID2 {
 		t.Errorf("Wrong usage retrieved. Expected id %s, but got id %s", testUsageID2, usages[1].UsageID)
+	}
+
+}
+
+func tagService(t *testing.T) {
+	t.Run("CreateTag", createTag_should_insert_tag_into_mongo)
+}
+
+func createTag_should_insert_tag_into_mongo(t *testing.T) {
+	session := connect()
+	defer finishTest(session)
+	tagService := service.NewTagService(session.Copy(), dbName, collectionName)
+
+	testId, testTagID, testTagName := "1111", "this_tagID", "this_tagName"
+	tag := entity.Tag{
+		ID:      testId,
+		TagID:   testTagID,
+		TagName: testTagName,
+	}
+
+	err := tagService.CreateTag(&tag)
+	if err != nil {
+		t.Errorf("Unable to create tag: %s", err)
+	}
+
+	results := make([]entity.Tag, 0)
+	session.GetCollection(dbName, collectionName).Find(nil).All(&results)
+
+	count := len(results)
+	if count != 1 {
+		t.Errorf("Incorrect number of results. Expecting 1, got %d", count)
+	}
+
+	if results[0].TagID != tag.TagID {
+		t.Errorf("Wrong tagID. Expected %s, got %s", testTagID, results[0].TagID)
+	}
+	if results[0].TagName != tag.TagName {
+		t.Errorf("Wrong tagName. Expected %s, got %s", testTagName, results[0].TagID)
+	}
+
+}
+
+func usageSelectionService(t *testing.T) {
+	t.Run("CreateUsageSelection", createUsageSelection_should_insert_tag_into_mongo)
+	t.Run("GetByUsernameAndTags", getByUsernameAndTags_should_retrieve_the_right_UsageSelection)
+}
+
+func createUsageSelection_should_insert_tag_into_mongo(t *testing.T) {
+	session := connect()
+	defer finishTest(session)
+	usService := service.NewUsageSelectionService(session.Copy(), dbName, collectionName)
+
+	testId, testUsername, testTagIDs, testUsageIDs := "1111", "user", []string{"tag1", "tag2"}, []string{"usage1", "usage2", "usage3"}
+	usageSelection := entity.UsageSelection{
+		ID:       testId,
+		Username: testUsername,
+		TagIDs:   testTagIDs,
+		UsageIDs: testUsageIDs,
+	}
+
+	err := usService.CreateUsageSelection(&usageSelection)
+	if err != nil {
+		t.Errorf("Unable to create usage selection: %s", err)
+	}
+
+	results := make([]entity.UsageSelection, 0)
+	session.GetCollection(dbName, collectionName).Find(nil).All(&results)
+
+	count := len(results)
+	if count != 1 {
+		t.Errorf("Incorrect number of results. Expecting 1, got %d", count)
+	}
+
+	if results[0].Username != usageSelection.Username {
+		t.Errorf("Wrong username. Expected %s, got %s", testUsername, results[0].Username)
+	}
+	if !reflect.DeepEqual(results[0].TagIDs, usageSelection.TagIDs) {
+		t.Errorf("Wrong tagIDs. Expected %s, got %s", testTagIDs, results[0].TagIDs)
+	}
+}
+
+func getByUsernameAndTags_should_retrieve_the_right_UsageSelection(t *testing.T) {
+	session := connect()
+	defer finishTest(session)
+	usService := service.NewUsageSelectionService(session.Copy(), dbName, collectionName)
+
+	testUsername1, testTagIDs1, testUsageIDs1 := "user1", []string{"tag1", "tag2"}, []string{"usage1", "usage2", "usage3"}
+	testUsername2, testTagIDs2, testUsageIDs2 := "user1", []string{"tag3", "tag4"}, []string{"usage2", "usage3"}
+	testUsername3, testTagIDs3, testUsageIDs3 := "user2", []string{"tag3", "tag4"}, []string{"usage2", "usage1"}
+	usageSelection1, usageSelection2, usageSelection3 :=
+		entity.UsageSelection{
+			Username: testUsername1,
+			TagIDs:   testTagIDs1,
+			UsageIDs: testUsageIDs1,
+		}, entity.UsageSelection{
+			Username: testUsername2,
+			TagIDs:   testTagIDs2,
+			UsageIDs: testUsageIDs2,
+		}, entity.UsageSelection{
+			Username: testUsername3,
+			TagIDs:   testTagIDs3,
+			UsageIDs: testUsageIDs3,
+		}
+
+	err := usService.CreateUsageSelection(&usageSelection1)
+	err = usService.CreateUsageSelection(&usageSelection2)
+	err = usService.CreateUsageSelection(&usageSelection3)
+	if err != nil {
+		t.Errorf("Unable to create usage selections: %s", err)
+	}
+
+	result1, err := usService.GetByUsernameAndTags("user1", []string{"tag3", "tag4"})
+	if err != nil {
+		t.Errorf("Error while querying. %s", err)
+	}
+	result2, err := usService.GetByUsernameAndTags("user1", []string{"tag1", "tag2"})
+	if err != nil {
+		t.Errorf("Error while querying. %s", err)
+	}
+
+	usageSelection2.ID, usageSelection1.ID = result1.ID, result2.ID
+	if !reflect.DeepEqual(*result1, usageSelection2) {
+		t.Errorf("First query failed. Queried [%s, [%s, %s]], obtained %v", "user1", "tag3", "tag4", result1)
+	}
+	if !reflect.DeepEqual(*result2, usageSelection1) {
+		t.Errorf("First query failed. Queried [%s, [%s, %s]], obtained %v", "user1", "tag1", "tag2", result2)
 	}
 
 }

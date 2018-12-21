@@ -9,7 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// UsageService serves the mongo operations for Usage
+// UsageService serves the mongo operations for Usage.
 type UsageService struct {
 	collection *mgo.Collection
 }
