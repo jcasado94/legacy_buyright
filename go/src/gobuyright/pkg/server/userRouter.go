@@ -51,8 +51,8 @@ func (ur *userRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, http.StatusOK, user)
 }
 
-func decodeUser(r *http.Request) (entity.User, error) {
-	var u entity.User
+func decodeUser(r *http.Request) (entity.IUser, error) {
+	var u entity.IUser
 	if r.Body == nil {
 		return u, errors.New("No request body")
 	}

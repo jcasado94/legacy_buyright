@@ -1,11 +1,11 @@
 package entity
 
-type User struct {
+type IUser struct {
 	ID       string `json:"id"`
 	Username string `json:"username"`
 }
 
 type UserService interface {
-	CreateUser(u *User) error
-	GetByUsername(username string) (*User, error)
+	CreateUser(u *IUser) error
+	GetByUsername(username string) (*IUser, error)
 }

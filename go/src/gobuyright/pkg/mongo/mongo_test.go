@@ -15,34 +15,34 @@ const (
 )
 
 func TestServices(t *testing.T) {
-	t.Run("UserService", userService)
+	t.Run("IUserService", iUserService)
 	t.Run("UsageService", usageService)
 }
 
-func userService(t *testing.T) {
-	t.Run("CreateUser", createUser_should_insert_user_into_mongo)
+func iUserService(t *testing.T) {
+	t.Run("CreateIUser", createIUser_should_insert_user_into_mongo)
 }
 
-func createUser_should_insert_user_into_mongo(t *testing.T) {
+func createIUser_should_insert_user_into_mongo(t *testing.T) {
 	session, err := mongo.NewSession(mongoUrl)
 	if err != nil {
 		log.Fatalf("Unable to connect to mongo: %s", err)
 	}
 	defer finishTest(session)
-	userService := service.NewUserService(session.Copy(), dbName, collectionName)
+	iUserService := service.NewIUserService(session.Copy(), dbName, collectionName)
 
 	testId, testUsername := "1111", "super_username"
-	user := entity.User{
+	user := entity.IUser{
 		ID:       testId,
 		Username: testUsername,
 	}
 
-	err = userService.CreateUser(&user)
+	err = iUserService.CreateUser(&user)
 	if err != nil {
 		t.Errorf("Unable to create user: %s", err)
 	}
 
-	results := make([]entity.User, 0)
+	results := make([]entity.IUser, 0)
 	session.GetCollection(dbName, collectionName).Find(nil).All(&results)
 
 	count := len(results)
