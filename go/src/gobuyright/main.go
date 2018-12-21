@@ -14,8 +14,10 @@ func main() {
 	}
 	defer ms.Close()
 
-	u := service.NewIUserService(ms.Copy(), "buyright", "iUser")
-	s := server.NewServer(u)
+	s := server.NewServer(
+		service.NewIUserService(ms.Copy(), "buyright", "iuser"),
+		service.NewUsageSelectionService(ms.Copy(), "buyright", "usageselection"),
+	)
 
 	s.Start()
 }
