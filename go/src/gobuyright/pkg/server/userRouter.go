@@ -9,12 +9,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type userRouter struct {
-	userService entity.UserService
+type iUserRouter struct {
+	iUserService entity.IUserService
 }
 
-func NewUserRouter(u entity.UserService, router *mux.Router) *mux.Router {
-	userRouter := userRouter{u}
+// NewIUserRouter creates a new iUserRouter with the provided Service and Router.
+func NewIUserRouter(u entity.IUserService, router *mux.Router) *mux.Router {
+	userRouter := iUserRouter{u}
 
 	router.HandleFunc("/", userRouter.createUserHandler).Methods("PUT")
 	router.HandleFunc("/{username}", userRouter.getUserHandler).Methods("GET")
@@ -22,33 +23,33 @@ func NewUserRouter(u entity.UserService, router *mux.Router) *mux.Router {
 	return router
 }
 
-func (ur *userRouter) createUserHandler(w http.ResponseWriter, r *http.Request) {
+func (ur *iUserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := decodeUser(r)
 	if err != nil {
 		WriteError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	err = ur.userService.CreateUser(&user)
+	err = ur.iUserService.CreateUser(&user)
 	if err != nil {
 		WriteError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	WriteJson(w, http.StatusOK, err)
+	WriteJSON(w, http.StatusOK, err)
 }
 
-func (ur *userRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
+func (ur *iUserRouter) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
-	user, err := ur.userService.GetByUsername(username)
+	user, err := ur.iUserService.GetByUsername(username)
 	if err != nil {
 		WriteError(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	WriteJson(w, http.StatusOK, user)
+	WriteJSON(w, http.StatusOK, user)
 }
 
 func decodeUser(r *http.Request) (entity.IUser, error) {

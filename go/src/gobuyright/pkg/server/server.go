@@ -10,16 +10,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Server controls the routing of the incoming queries.
 type Server struct {
 	router *mux.Router
 }
 
-func NewServer(u entity.UserService) *Server {
+// NewServer creates a new server given the needed Services.
+func NewServer(u entity.IUserService) *Server {
 	s := Server{router: mux.NewRouter()}
-	NewUserRouter(u, s.newSubrouter("/user"))
+	NewIUserRouter(u, s.newSubrouter("/user"))
 	return &s
 }
 
+// Start starts the routing to port 8080.
 func (s *Server) Start() {
 	log.Println("Listening on port 8080")
 	if err := http.ListenAndServe(":8080", handlers.LoggingHandler(os.Stdout, s.router)); err != nil {
