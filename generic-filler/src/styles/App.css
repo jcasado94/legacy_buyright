@@ -1,0 +1,68 @@
+.App {
+  text-align: center;
+}
+
+.Prod-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.usage-button {
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 15px;
+  border: none;
+  background: #404040;
+  color: #ffffff !important;
+  border-radius: 6px;
+  position: relative;
+  width: 10vh;
+  height: 10vh;
+  vertical-align: middle;
+}
+
+.usage-button.active {
+  color: #404040 !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px;
+  background: white;
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  }
+
+.usage-button-number {
+  position: absolute;
+  left: 2.4vh;
+  top: 0;
+  font-size: 9vh;
+  color: #aaaaaad6;
+  opacity: 0.5;
+  z-index: 1;
+
+}
+
+.usage-button-text {
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+  z-index: 2;
+}
+
+.prod-properties {
+  margin-top: 30px;
+  margin-bottom: 60px;
+}
+
+.App-main {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.react-tags {
+  margin-bottom: 50px;
+}
