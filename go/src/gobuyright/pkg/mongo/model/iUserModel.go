@@ -7,7 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// IUserModel is the DB model for User
+// IUserModel is the DB model for entity.IUser.
 type IUserModel struct {
 	ID       bson.ObjectId `bson:"_id,omitempty"`
 	Username string
@@ -24,13 +24,14 @@ func IUserModelIndex() mgo.Index {
 	}
 }
 
-// NewIUserModel creates a new UserModel given a User
+// NewIUserModel creates a new UserModel given a IUser.
 func NewIUserModel(u *entity.IUser) *IUserModel {
 	return &IUserModel{
 		Username: u.Username,
 	}
 }
 
+// ToIUser creates an IUser from the IUserModel.
 func (um *IUserModel) ToIUser() *entity.IUser {
 	return &entity.IUser{
 		ID:       um.ID.Hex(),

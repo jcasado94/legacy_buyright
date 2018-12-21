@@ -17,6 +17,7 @@ const (
 func TestServices(t *testing.T) {
 	t.Run("IUserService", iUserService)
 	t.Run("UsageService", usageService)
+	t.Run("TagService", tagService)
 }
 
 func iUserService(t *testing.T) {
@@ -134,6 +135,44 @@ func getAllUsages_should_return_all_usages_in_mongo(t *testing.T) {
 	}
 	if usages[1].UsageID != testUsageID2 {
 		t.Errorf("Wrong usage retrieved. Expected id %s, but got id %s", testUsageID2, usages[1].UsageID)
+	}
+
+}
+
+func tagService(t *testing.T) {
+	t.Run("CreateTag", createTag_should_insert_tag_into_mongo)
+}
+
+func createTag_should_insert_tag_into_mongo(t *testing.T) {
+	session := connect()
+	defer finishTest(session)
+	tagService := service.NewTagService(session.Copy(), dbName, collectionName)
+
+	testId, testUsageID, testUsageName := "1111", "this_tagID", "this_tagName"
+	tag := entity.Tag{
+		ID:      testId,
+		TagID:   testUsageID,
+		TagName: testUsageName,
+	}
+
+	err := tagService.CreateTag(&tag)
+	if err != nil {
+		t.Errorf("Unable to create tag: %s", err)
+	}
+
+	results := make([]entity.Tag, 0)
+	session.GetCollection(dbName, collectionName).Find(nil).All(&results)
+
+	count := len(results)
+	if count != 1 {
+		t.Errorf("Incorrect number of results. Expecting 1, got %d", count)
+	}
+
+	if results[0].TagID != tag.TagID {
+		t.Errorf("Wrong tagID. Expected %s, got %s", testUsageID, results[0].TagID)
+	}
+	if results[0].TagName != tag.TagName {
+		t.Errorf("Wrong tagName. Expected %s, got %s", testUsageName, results[0].TagID)
 	}
 
 }
